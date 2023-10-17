@@ -1,5 +1,8 @@
 import asyncHandler from 'express-async-handler'
 import passport from '../config/passport'
+import { validate } from '../middleware/validateRequest.ts'
+import * as requestSchemas from '../lib/requestSchemas.ts'
+
 import { generateHash, validatePassword } from '../lib/passwordUtils'
 import jwt from 'jsonwebtoken'
 import dotenv from 'dotenv'
@@ -8,6 +11,7 @@ dotenv.config()
 import * as AdminRepo from '../repos/AdminRepo'
 
 export const register = [
+  validate(requestSchemas.admin),
   passport.authenticate('jwt', { session: false }),
   asyncHandler(async (req, res) => {
     const { name, password } = req.body
@@ -43,6 +47,7 @@ export const register = [
 ]
 
 export const login = [
+  validate(requestSchemas.admin),
   passport.authenticate('jwt', { session: false }),
   asyncHandler(async (req, res) => {
     const { name, password } = req.body
