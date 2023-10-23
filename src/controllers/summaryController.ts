@@ -1,9 +1,12 @@
 import asyncHandler from 'express-async-handler'
 import passport from '../config/passport'
+import { validate } from '../middleware/validateRequest.ts'
+import * as requestSchemas from '../lib/requestSchemas.ts'
 import * as SummaryRepo from '../repos/SummaryRepo'
 import { Student } from '@prisma/client'
 
 export const create = [
+  validate(requestSchemas.summary),
   passport.authenticate('jwt', { session: false }),
   asyncHandler(async (req, res) => {
     const { id: studentId } = req.user as Student
@@ -33,6 +36,7 @@ export const getAll = [
 ]
 
 export const update = [
+  validate(requestSchemas.summary),
   passport.authenticate('jwt', { session: false }),
   asyncHandler(async (req, res) => {
     const { id: studentId } = req.user as Student

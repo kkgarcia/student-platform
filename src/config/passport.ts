@@ -1,4 +1,3 @@
-import { Request } from 'express'
 import passport from 'passport'
 import { Strategy as JwtStrategy, type StrategyOptions } from 'passport-jwt'
 import { ExtractJwt } from 'passport-jwt'

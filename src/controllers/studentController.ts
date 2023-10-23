@@ -1,20 +1,27 @@
 import { Request, Response } from 'express'
 import asyncHandler from 'express-async-handler'
 import passport from '../config/passport'
+import { validate } from '../middleware/validateRequest.ts'
+import * as requestSchemas from '../lib/requestSchemas.ts'
 import { generateHash, validatePassword } from '../lib/passwordUtils'
 import jwt from 'jsonwebtoken'
 import dotenv from 'dotenv'
-dotenv.config()
-
 import * as StudentRepo from '../repos/StudentRepo'
 
+dotenv.config()
+
 export const register = [
+  validate(requestSchemas.student),
   asyncHandler(async (req, res) => {
     const { firstName, lastName, groupUnit, password } = req.body
 
-    const isStudentExists = StudentRepo.exists(firstName, lastName, groupUnit)
+    const isStudentExists = await StudentRepo.exists(
+      firstName,
+      lastName,
+      groupUnit
+    )
 
-    if (!!isStudentExists) {
+    if (isStudentExists) {
       res.status(409).json({ error: 'Student already exists' })
       return
     }
@@ -43,6 +50,7 @@ export const register = [
 ]
 
 export const login = [
+  validate(requestSchemas.student),
   asyncHandler(async (req, res) => {
     const { firstName, lastName, groupUnit, password } = req.body
 

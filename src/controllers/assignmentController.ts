@@ -1,8 +1,11 @@
 import asyncHandler from 'express-async-handler'
 import passport from '../config/passport'
+import { validate } from '../middleware/validateRequest.ts'
+import * as requestSchemas from '../lib/requestSchemas.ts'
 import * as AssignmentRepo from '../repos/AssignmentRepo'
 
 export const create = [
+  validate(requestSchemas.assignment),
   passport.authenticate('jwt', { session: false }),
   asyncHandler(async (req, res) => {
     const { moduleId } = req.params
@@ -21,6 +24,7 @@ export const create = [
 ]
 
 export const update = [
+  validate(requestSchemas.assignment),
   passport.authenticate('jwt', { session: false }),
   asyncHandler(async (req, res) => {
     const { moduleId, assignmentId } = req.params
