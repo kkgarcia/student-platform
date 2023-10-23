@@ -1,50 +1,7 @@
-import asyncHandler from 'express-async-handler'
-import { validate } from '../middleware/validateRequest.ts'
-import * as requestSchemas from '../lib/requestSchemas.ts'
-import passport from '../config/passport'
-import * as CommentRepo from '../repos/CommentRepo'
-import { Student } from '@prisma/client'
+import * as CommentService from '../modules/Comment/commentService'
 
-export const create = [
-  validate(requestSchemas.comment),
-  passport.authenticate('jwt', { session: false }),
-  asyncHandler(async (req, res) => {
-    const { id: studentId } = req.user as Student
-    const { moduleId } = req.params
-    const { text } = req.body
+export const create = CommentService.create
 
-    const newComment = await CommentRepo.create({
-      text,
-      studentId,
-      moduleId: Number(moduleId),
-      createdAt: new Date(),
-      updatedAt: new Date(),
-    })
+export const update = CommentService.update
 
-    res.status(202).json({ data: newComment })
-  }),
-]
-
-export const update = [
-  validate(requestSchemas.comment),
-  passport.authenticate('jwt', { session: false }),
-  asyncHandler(async (req, res) => {
-    const { commentId } = req.params
-    const { text } = req.body
-
-    const newComment = await CommentRepo.update(Number(commentId), text)
-
-    res.status(202).json({ data: newComment })
-  }),
-]
-
-export const remove = [
-  passport.authenticate('jwt', { session: false }),
-  asyncHandler(async (req, res) => {
-    const { commentId } = req.params
-
-    const deletedComment = await CommentRepo.deleteOne(Number(commentId))
-
-    res.status(202).json({ data: deletedComment })
-  }),
-]
+export const remove = CommentService.remove

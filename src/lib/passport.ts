@@ -3,12 +3,11 @@ import { Strategy as JwtStrategy, type StrategyOptions } from 'passport-jwt'
 import { ExtractJwt } from 'passport-jwt'
 import * as StudentRepo from '../repos/StudentRepo.ts'
 import * as AdminRepo from '../repos/AdminRepo.ts'
-import dotenv from 'dotenv'
-dotenv.config()
+import { SECRET } from '../config'
 
 const options: StrategyOptions = {
   jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
-  secretOrKey: process.env.SECRET,
+  secretOrKey: SECRET,
 }
 
 passport.use(
@@ -39,4 +38,4 @@ passport.use(
   })
 )
 
-export default passport
+export { passport }

@@ -1,75 +1,11 @@
-import asyncHandler from 'express-async-handler'
-import passport from '../config/passport'
-import { validate } from '../middleware/validateRequest.ts'
-import * as requestSchemas from '../lib/requestSchemas.ts'
-import * as ModuleRepo from '../repos/ModuleRepo'
-import { Module } from '@prisma/client'
+import * as ModuleService from '../modules/Module/moduleService'
 
-export const create = [
-  validate(requestSchemas.module),
-  passport.authenticate('jwt', { session: false }),
-  asyncHandler(async (req, res) => {
-    const { title, subject, text } = req.body
+export const create = ModuleService.create
 
-    const newModule = await ModuleRepo.create({
-      title,
-      subject,
-      text,
-      createdAt: new Date(),
-      updatedAt: new Date(),
-    })
+export const update = ModuleService.update
 
-    res.status(202).json({ data: newModule })
-  }),
-]
+export const getAll = ModuleService.getAll
 
-export const update = [
-  validate(requestSchemas.module),
-  passport.authenticate('jwt', { session: false }),
-  asyncHandler(async (req, res) => {
-    const { moduleId } = req.params
-    const { title, subject, text } = req.body as Module
+export const getOne = ModuleService.getOne
 
-    const options = {
-      title,
-      subject,
-      text,
-      updatedAt: new Date(),
-    }
-
-    const updatedModule = await ModuleRepo.update(Number(moduleId), options)
-
-    res.status(202).json({ data: updatedModule })
-  }),
-]
-
-export const getAll = [
-  passport.authenticate('jwt', { session: false }),
-  asyncHandler(async (req, res) => {
-    const moduleCollection = await ModuleRepo.getAllModules()
-
-    res.status(200).json({ data: moduleCollection })
-  }),
-]
-
-export const getOne = [
-  passport.authenticate('jwt', { session: false }),
-  asyncHandler(async (req, res) => {
-    const { moduleId } = req.params
-
-    const moduleDetails = await ModuleRepo.getOne(Number(moduleId))
-
-    res.status(200).json({ data: moduleDetails })
-  }),
-]
-
-export const deleteOne = [
-  passport.authenticate('jwt', { session: false }),
-  asyncHandler(async (req, res) => {
-    const { moduleId } = req.params
-
-    const deletedModule = await ModuleRepo.deleteOne(Number(moduleId))
-
-    res.status(202).json({ data: deletedModule })
-  }),
-]
+export const deleteOne = ModuleService.deleteOne

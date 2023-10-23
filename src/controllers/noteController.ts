@@ -1,59 +1,9 @@
-import asyncHandler from 'express-async-handler'
-import passport from '../config/passport'
-import { validate } from '../middleware/validateRequest.ts'
-import * as requestSchemas from '../lib/requestSchemas.ts'
-import * as NoteRepo from '../repos/NoteRepo'
-import { Student } from '@prisma/client'
+import * as NoteService from '../modules/Note/noteService'
 
-export const create = [
-  validate(requestSchemas.note),
-  passport.authenticate('jwt', { session: false }),
-  asyncHandler(async (req, res) => {
-    const { id: studentId } = req.user as Student
-    const { text } = req.body
+export const create = NoteService.create
 
-    const newNote = await NoteRepo.create({
-      studentId,
-      text,
-      createdAt: new Date(),
-      updatedAt: new Date(),
-    })
+export const getAll = NoteService.getAll
 
-    res.status(202).json({ data: newNote })
-  }),
-]
+export const update = NoteService.update
 
-export const getAll = [
-  passport.authenticate('jwt', { session: false }),
-  asyncHandler(async (req, res) => {
-    const { id: studentId } = req.user as Student
-
-    const allNotes = await NoteRepo.getAll(studentId)
-
-    res.status(200).json({ data: allNotes })
-  }),
-]
-
-export const update = [
-  validate(requestSchemas.note),
-  passport.authenticate('jwt', { session: false }),
-  asyncHandler(async (req, res) => {
-    const { noteId } = req.params
-    const { text } = req.body
-
-    const newNote = await NoteRepo.update(Number(noteId), text)
-
-    res.status(202).json({ data: newNote })
-  }),
-]
-
-export const deleteOne = [
-  passport.authenticate('jwt', { session: false }),
-  asyncHandler(async (req, res) => {
-    const { noteId } = req.params
-
-    const deletedNote = await NoteRepo.deleteOne(Number(noteId))
-
-    res.status(202).json({ data: deletedNote })
-  }),
-]
+export const deleteOne = NoteService.deleteOne

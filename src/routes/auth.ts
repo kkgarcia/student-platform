@@ -8,6 +8,6 @@ const router = Router()
 router.get('/student', studentController.isAuthenticated)
 
 // GET for chekcing if User is Admin
-router.get('/admin', adminController.isAuthorized)
+router.get('/admin', adminController.isAdmin)
 
 export default router

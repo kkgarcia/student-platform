@@ -1,71 +1,9 @@
-import asyncHandler from 'express-async-handler'
-import passport from '../config/passport'
-import { validate } from '../middleware/validateRequest.ts'
-import * as requestSchemas from '../lib/requestSchemas.ts'
-import * as SummaryRepo from '../repos/SummaryRepo'
-import { Student } from '@prisma/client'
+import * as SummaryService from '../modules/Summary/summaryService'
 
-export const create = [
-  validate(requestSchemas.summary),
-  passport.authenticate('jwt', { session: false }),
-  asyncHandler(async (req, res) => {
-    const { id: studentId } = req.user as Student
-    const { title, text } = req.body
+export const create = SummaryService.create
 
-    const newSummary = await SummaryRepo.create({
-      studentId,
-      title,
-      text,
-      createdAt: new Date(),
-      updatedAt: new Date(),
-    })
+export const getAll = SummaryService.getAll
 
-    res.status(202).json({ data: newSummary })
-  }),
-]
+export const update = SummaryService.update
 
-export const getAll = [
-  passport.authenticate('jwt', { session: false }),
-  asyncHandler(async (req, res) => {
-    const { id: studentId } = req.user as Student
-
-    const allSummaries = await SummaryRepo.getAll(Number(studentId))
-
-    res.status(200).json({ data: allSummaries })
-  }),
-]
-
-export const update = [
-  validate(requestSchemas.summary),
-  passport.authenticate('jwt', { session: false }),
-  asyncHandler(async (req, res) => {
-    const { id: studentId } = req.user as Student
-    const { summaryId } = req.params
-    const { title, text } = req.body
-
-    const updatedSummary = await SummaryRepo.update({
-      id: Number(summaryId),
-      studentId,
-      title,
-      text,
-      updatedAt: new Date(),
-    })
-
-    res.status(202).json({ data: updatedSummary })
-  }),
-]
-
-export const remove = [
-  passport.authenticate('jwt', { session: false }),
-  asyncHandler(async (req, res) => {
-    const { id: studentId } = req.user as Student
-    const { summaryId } = req.params
-
-    const deletedSummary = await SummaryRepo.deleteOne(
-      Number(summaryId),
-      Number(studentId)
-    )
-
-    res.status(202).json({ data: deletedSummary })
-  }),
-]
+export const remove = SummaryService.remove
