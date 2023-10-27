@@ -1,5 +1,9 @@
 import { Router } from 'express'
 import { passport } from '../lib/passport'
+import { validate } from '../middleware/validateRequest'
+import { assignmentDTO } from '../modules/Assignment/assignmentDTO'
+import { commentDTO } from '../modules/Comment/commentDTO'
+import { moduleDTO } from '../modules/Module/moduleDTO'
 import * as moduleController from '../controllers/moduleController'
 import * as commentController from '../controllers/commentController'
 import * as assignmentController from '../controllers/assignmentController'
@@ -10,6 +14,7 @@ const router = Router()
 router.post(
   '/create',
   passport.authenticate('jwt', { session: false }),
+  validate(moduleDTO),
   moduleController.create
 )
 
@@ -17,6 +22,7 @@ router.post(
 router.post(
   '/:moduleId/comment/create',
   passport.authenticate('jwt', { session: false }),
+  validate(commentDTO),
   commentController.create
 )
 
@@ -24,6 +30,7 @@ router.post(
 router.put(
   '/:moduleId/comment/:commentId/update',
   passport.authenticate('jwt', { session: false }),
+  validate(commentDTO),
   commentController.update
 )
 
@@ -38,6 +45,7 @@ router.delete(
 router.post(
   '/:moduleId/assignment/create',
   passport.authenticate('jwt', { session: false }),
+  validate(assignmentDTO),
   assignmentController.create
 )
 
@@ -45,6 +53,7 @@ router.post(
 router.put(
   '/:moduleId/assignment/:assignmentId/update',
   passport.authenticate('jwt', { session: false }),
+  validate(assignmentDTO),
   assignmentController.update
 )
 
@@ -59,6 +68,7 @@ router.delete(
 router.put(
   '/:moduleId/update',
   passport.authenticate('jwt', { session: false }),
+  validate(moduleDTO),
   moduleController.update
 )
 

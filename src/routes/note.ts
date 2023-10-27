@@ -1,5 +1,7 @@
 import { Router } from 'express'
 import { passport } from '../lib/passport'
+import { validate } from '../middleware/validateRequest'
+import { noteDTO } from '../modules/Note/noteDTO'
 import * as noteController from '../controllers/noteController'
 
 const router = Router()
@@ -8,6 +10,7 @@ const router = Router()
 router.post(
   '/create',
   passport.authenticate('jwt', { session: false }),
+  validate(noteDTO),
   noteController.create
 )
 
@@ -15,6 +18,7 @@ router.post(
 router.put(
   '/:noteId/update',
   passport.authenticate('jwt', { session: false }),
+  validate(noteDTO),
   noteController.update
 )
 

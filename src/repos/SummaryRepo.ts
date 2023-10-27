@@ -1,15 +1,15 @@
 import prisma from '../lib/prisma'
 
-type Summary = {
+export type Summary = {
   id?: number
   studentId: number
   title: string
   text: string
-  createdAt: Date
+  createdAt?: Date
   updatedAt?: Date
 }
 
-type SummaryUpdateOptions = Omit<Summary, 'createdAt'>
+export type SummaryUpdateOptions = Omit<Summary, 'createdAt'>
 
 export const create = async (summary: Summary) => {
   const newSummary = await prisma.summary.create({
@@ -17,8 +17,8 @@ export const create = async (summary: Summary) => {
       studentId: summary.studentId,
       title: summary.title,
       text: summary.text,
-      createdAt: summary.createdAt,
-      updatedAt: summary.updatedAt,
+      createdAt: summary.createdAt || new Date(),
+      updatedAt: summary.updatedAt || new Date(),
     },
   })
 
@@ -44,7 +44,7 @@ export const update = async (options: SummaryUpdateOptions) => {
     data: {
       title: options.title,
       text: options.text,
-      updatedAt: options.updatedAt,
+      updatedAt: options.updatedAt || new Date(),
     },
   })
 

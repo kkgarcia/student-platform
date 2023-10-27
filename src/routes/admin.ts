@@ -1,6 +1,8 @@
 import { Router } from 'express'
 import { passport } from '../lib/passport.ts'
 import * as adminController from '../controllers/adminController.ts'
+import { validate } from '../middleware/validateRequest.ts'
+import { adminDTO } from '../modules/Admin/adminDTO.ts'
 
 const router = Router()
 
@@ -8,6 +10,7 @@ const router = Router()
 router.post(
   '/register',
   passport.authenticate('jwt', { session: false }),
+  validate(adminDTO),
   adminController.register
 )
 
@@ -15,6 +18,7 @@ router.post(
 router.post(
   '/log-in',
   passport.authenticate('jwt', { session: false }),
+  validate(adminDTO),
   adminController.login
 )
 

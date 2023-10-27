@@ -1,87 +1,60 @@
-import asyncHandler from 'express-async-handler'
 import jwt from 'jsonwebtoken'
-import { validate } from '../../middleware/validateRequest'
-import { adminDTO } from './adminDTO'
+import createError from 'http-errors'
 import { generateHash, validatePassword } from '../../lib/passwordUtils'
 import * as AdminRepo from '../../repos/AdminRepo'
 import { SECRET } from '../../config'
 
-export const register = [
-  validate(adminDTO),
-  asyncHandler(async (req, res) => {
-    const { name, password } = req.body
+export const register = async (name: string, password: string) => {
+  const admin = await AdminRepo.exists(name)
 
-    const admin = await AdminRepo.exists(name)
+  if (admin) {
+    throw createError(409, 'Admin already exists')
+  }
 
-    if (admin) {
-      res.status(409).json({
-        error: 'Admin already exists',
-      })
-      return
-    }
+  const newAdmin = await AdminRepo.create({
+    name,
+    password: generateHash(password),
+  })
 
-    const newAdmin = await AdminRepo.create({
-      name,
-      password: generateHash(password),
-    })
+  const payload = {
+    sub: newAdmin.id,
+    name: newAdmin.name,
+    role: 'ADMIN',
+    iat: Math.floor(Date.now() / 1000),
+  }
 
-    const payload = {
-      sub: newAdmin.id,
-      name: newAdmin.name,
-      role: 'ADMIN',
-      iat: Math.floor(Date.now() / 1000),
-    }
+  const token = jwt.sign(payload, SECRET as string, {
+    expiresIn: '3d',
+    algorithm: 'HS256',
+  })
 
-    const token = jwt.sign(payload, SECRET as string, {
-      expiresIn: '3d',
-      algorithm: 'HS256',
-    })
+  return token
+}
 
-    res.status(202).json({ token })
-  }),
-]
+export const login = async (name: string, password: string) => {
+  const admin = await AdminRepo.exists(name)
 
-export const login = [
-  validate(adminDTO),
-  asyncHandler(async (req, res) => {
-    const { name, password } = req.body
+  if (!admin) {
+    throw createError(400, 'No such admin')
+  }
 
-    const admin = await AdminRepo.exists(name)
+  const isPasswordValid = validatePassword(password, admin.password)
 
-    if (!admin) {
-      res.status(400).json({
-        error: 'No such admin',
-      })
-      return
-    }
+  if (!isPasswordValid) {
+    throw createError(401, 'Incorrect password')
+  }
 
-    const isPasswordValid = validatePassword(password, admin.password)
+  const payload = {
+    sub: admin.id,
+    name: admin.name,
+    role: 'ADMIN',
+    iat: Math.floor(Date.now() / 1000),
+  }
 
-    if (!isPasswordValid) {
-      res.status(401).json({
-        error: 'Incorrect passoword',
-      })
-      return
-    }
+  const token = jwt.sign(payload, SECRET as string, {
+    expiresIn: '3d',
+    algorithm: 'HS256',
+  })
 
-    const payload = {
-      sub: admin.id,
-      name: admin.name,
-      role: 'ADMIN',
-      iat: Math.floor(Date.now() / 1000),
-    }
-
-    const token = jwt.sign(payload, SECRET as string, {
-      expiresIn: '3d',
-      algorithm: 'HS256',
-    })
-
-    res.status(202).json({ token })
-  }),
-]
-
-export const checkIfAuthorized = [
-  asyncHandler(async (req, res) => {
-    res.status(200).json({ status: 'Authorized' })
-  }),
-]
+  return token
+}

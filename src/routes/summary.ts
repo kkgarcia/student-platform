@@ -1,5 +1,7 @@
 import { Router } from 'express'
 import { passport } from '../lib/passport'
+import { validate } from '../middleware/validateRequest'
+import { summaryDTO } from '../modules/Summary/summaryDTO'
 import * as summaryController from '../controllers/summaryController'
 
 const router = Router()
@@ -8,6 +10,7 @@ const router = Router()
 router.post(
   '/create',
   passport.authenticate('jwt', { session: false }),
+  validate(summaryDTO),
   summaryController.create
 )
 
@@ -15,6 +18,7 @@ router.post(
 router.put(
   '/:summaryId/update',
   passport.authenticate('jwt', { session: false }),
+  validate(summaryDTO),
   summaryController.update
 )
 
