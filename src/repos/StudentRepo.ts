@@ -1,6 +1,6 @@
 import prisma from '../lib/prisma.ts'
 
-type Student = {
+export type Student = {
   id?: number
   firstName: string
   lastName: string

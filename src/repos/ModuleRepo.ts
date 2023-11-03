@@ -1,12 +1,12 @@
 import prisma from '../lib/prisma'
 
-type Module = {
+export type Module = {
   id?: number
   title: string
   subject: string
   text: string
+  updatedAt?: Date
   createdAt?: Date
-  updatedAt: Date
 }
 
 export const create = async (module: Module) => {
@@ -15,8 +15,8 @@ export const create = async (module: Module) => {
       title: module.title,
       subject: module.subject,
       text: module.text,
-      createdAt: module.createdAt,
-      updatedAt: module.updatedAt,
+      createdAt: module.createdAt || new Date(),
+      updatedAt: module.updatedAt || new Date(),
     },
   })
 
@@ -38,7 +38,7 @@ export const update = async (moduleId: number, options: Module) => {
       title: options.title,
       subject: options.subject,
       text: options.text,
-      updatedAt: options.updatedAt,
+      updatedAt: options.updatedAt || new Date(),
     },
   })
 

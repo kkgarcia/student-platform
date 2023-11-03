@@ -1,15 +1,15 @@
 import prisma from '../lib/prisma'
 
-type Assignment = {
+export type Assignment = {
   id?: number
   title: string
   text: string
   moduleId: number
-  createdAt: Date
+  createdAt?: Date
   updatedAt?: Date
 }
 
-type AssignmentUpdateOptions = Omit<Assignment, 'createdAt'>
+export type AssignmentUpdateOptions = Omit<Assignment, 'createdAt'>
 
 export const create = async (assignment: Assignment) => {
   const newAssignment = await prisma.assigment.create({
@@ -17,8 +17,8 @@ export const create = async (assignment: Assignment) => {
       title: assignment.title,
       text: assignment.text,
       moduleId: assignment.moduleId,
-      createdAt: assignment.createdAt,
-      updatedAt: assignment.updatedAt,
+      createdAt: assignment.createdAt || new Date(),
+      updatedAt: assignment.updatedAt || new Date(),
     },
   })
 
@@ -34,7 +34,7 @@ export const update = async (options: AssignmentUpdateOptions) => {
     data: {
       title: options.title,
       text: options.text,
-      updatedAt: options.updatedAt,
+      updatedAt: options.updatedAt || new Date(),
     },
   })
 

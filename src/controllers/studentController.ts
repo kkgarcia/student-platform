@@ -1,96 +1,33 @@
-import { Request, Response } from 'express'
+import { RequestHandler } from 'express'
 import asyncHandler from 'express-async-handler'
-import passport from '../config/passport'
-import { validate } from '../middleware/validateRequest.ts'
-import * as requestSchemas from '../lib/requestSchemas.ts'
-import { generateHash, validatePassword } from '../lib/passwordUtils'
-import jwt from 'jsonwebtoken'
-import dotenv from 'dotenv'
-import * as StudentRepo from '../repos/StudentRepo'
+import * as StudentService from '../modules/Student/studentService'
 
-dotenv.config()
+export const register = asyncHandler(async (req, res) => {
+  const { firstName, lastName, groupUnit, password } = req.body
 
-export const register = [
-  validate(requestSchemas.student),
-  asyncHandler(async (req, res) => {
-    const { firstName, lastName, groupUnit, password } = req.body
+  const token = await StudentService.register({
+    firstName,
+    lastName,
+    groupUnit,
+    password,
+  })
 
-    const isStudentExists = await StudentRepo.exists(
-      firstName,
-      lastName,
-      groupUnit
-    )
+  res.status(202).json({ token })
+})
 
-    if (isStudentExists) {
-      res.status(409).json({ error: 'Student already exists' })
-      return
-    }
+export const login = asyncHandler(async (req, res) => {
+  const { firstName, lastName, groupUnit, password } = req.body
 
-    const newStudent = await StudentRepo.create({
-      firstName,
-      lastName,
-      groupUnit,
-      password: generateHash(password),
-    })
+  const token = await StudentService.logIn({
+    firstName,
+    lastName,
+    groupUnit,
+    password,
+  })
 
-    const payload = {
-      sub: newStudent.id,
-      name: newStudent.firstName,
-      role: 'STUDENT',
-      iat: Math.floor(Date.now() / 1000),
-    }
+  res.status(202).json({ token })
+})
 
-    const token = jwt.sign(payload, process.env.SECRET as string, {
-      expiresIn: '3d',
-      algorithm: 'HS256',
-    })
-
-    res.status(202).json({ token })
-  }),
-]
-
-export const login = [
-  validate(requestSchemas.student),
-  asyncHandler(async (req, res) => {
-    const { firstName, lastName, groupUnit, password } = req.body
-
-    const student = await StudentRepo.exists(firstName, lastName, groupUnit)
-
-    if (!student) {
-      res.status(400).json({
-        error: 'No such student',
-      })
-      return
-    }
-
-    const isPasswordValid = validatePassword(password, student.password)
-
-    if (!isPasswordValid) {
-      res.status(401).json({
-        error: 'Incorrect passoword',
-      })
-      return
-    }
-
-    const payload = {
-      sub: student.id,
-      name: student.firstName,
-      role: 'STUDENT',
-      iat: Math.floor(Date.now() / 1000),
-    }
-
-    const token = jwt.sign(payload, process.env.SECRET as string, {
-      expiresIn: '3d',
-      algorithm: 'HS256',
-    })
-
-    res.status(202).json({ token })
-  }),
-]
-
-export const isAuthenticated = [
-  passport.authenticate('jwt', { session: false }),
-  (req: Request, res: Response) => {
-    return res.status(200).json({ status: 200 })
-  },
-]
+export const isAuthenticated: RequestHandler = (_, res) => {
+  res.status(200).json({ message: 'Authenticated' })
+}
