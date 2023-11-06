@@ -10,28 +10,28 @@ datasource db {
   url      = env("POSTGRES_URL")
 }
 
-model Student {
+enum Role {
+  ADMIN
+  STUDENT
+}
+
+model User {
   id        Int       @id @default(autoincrement())
   firstName String
   lastName  String
   groupUnit Int
+  role      Role      @default(STUDENT)
   password  String
   notes     Note[]
   summaries Summary[]
-  comment   Comment[]
-}
-
-model Admin {
-  id       Int    @id @default(autoincrement())
-  name     String
-  password String
+  comments  Comment[]
 }
 
 model Note {
   id        Int      @id @default(autoincrement())
   text      String
-  student   Student  @relation(fields: [studentId], references: [id])
-  studentId Int
+  user      User     @relation(fields: [userId], references: [id])
+  userId    Int
   createdAt DateTime @default(now())
   updatedAt DateTime @default(now())
 }
@@ -42,33 +42,33 @@ model Summary {
   text      String
   createdAt DateTime @default(now())
   updatedAt DateTime @default(now())
-  student   Student  @relation(fields: [studentId], references: [id])
-  studentId Int
+  user      User     @relation(fields: [userId], references: [id])
+  userId    Int
 }
 
 model Module {
-  id        Int         @id @default(autoincrement())
-  title     String
-  subject   String
-  text      String
-  commens   Comment[]
-  assigment Assigment[]
-  createdAt DateTime    @default(now())
-  updatedAt DateTime    @default(now())
+  id          Int          @id @default(autoincrement())
+  title       String
+  subject     String
+  text        String
+  comments    Comment[]
+  assignments Assignment[]
+  createdAt   DateTime     @default(now())
+  updatedAt   DateTime     @default(now())
 }
 
 model Comment {
   id        Int      @id @default(autoincrement())
   text      String
-  student   Student  @relation(fields: [studentId], references: [id])
-  studentId Int
+  user      User     @relation(fields: [userId], references: [id])
+  userId    Int
   module    Module   @relation(fields: [moduleId], references: [id])
   moduleId  Int
   createdAt DateTime @default(now())
   updatedAt DateTime @default(now())
 }
 
-model Assigment {
+model Assignment {
   id        Int      @id @default(autoincrement())
   title     String
   text      String
