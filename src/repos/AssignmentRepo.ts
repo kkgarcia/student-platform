@@ -1,24 +1,24 @@
 import prisma from '../lib/prisma'
 
-type Assignment = {
+export type Assignment = {
   id?: number
   title: string
   text: string
   moduleId: number
-  createdAt: Date
+  createdAt?: Date
   updatedAt?: Date
 }
 
-type AssignmentUpdateOptions = Omit<Assignment, 'createdAt'>
+export type AssignmentUpdateOptions = Omit<Assignment, 'createdAt'>
 
 export const create = async (assignment: Assignment) => {
-  const newAssignment = await prisma.assigment.create({
+  const newAssignment = await prisma.assignment.create({
     data: {
       title: assignment.title,
       text: assignment.text,
       moduleId: assignment.moduleId,
-      createdAt: assignment.createdAt,
-      updatedAt: assignment.updatedAt,
+      createdAt: assignment.createdAt || new Date(),
+      updatedAt: assignment.updatedAt || new Date(),
     },
   })
 
@@ -26,7 +26,7 @@ export const create = async (assignment: Assignment) => {
 }
 
 export const update = async (options: AssignmentUpdateOptions) => {
-  const updatedAssignment = await prisma.assigment.update({
+  const updatedAssignment = await prisma.assignment.update({
     where: {
       id: options.id,
       moduleId: options.moduleId,
@@ -34,7 +34,7 @@ export const update = async (options: AssignmentUpdateOptions) => {
     data: {
       title: options.title,
       text: options.text,
-      updatedAt: options.updatedAt,
+      updatedAt: options.updatedAt || new Date(),
     },
   })
 
@@ -42,7 +42,7 @@ export const update = async (options: AssignmentUpdateOptions) => {
 }
 
 export const deleteOne = async (assigmentId: number, moduleId: number) => {
-  const deletedAssignment = await prisma.assigment.delete({
+  const deletedAssignment = await prisma.assignment.delete({
     where: {
       id: assigmentId,
       moduleId,

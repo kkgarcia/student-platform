@@ -1,67 +1,50 @@
 import asyncHandler from 'express-async-handler'
-import passport from '../config/passport'
-import * as SummaryRepo from '../repos/SummaryRepo'
-import { Student } from '@prisma/client'
+import * as SummaryService from '../modules/Summary/summaryService'
+import { User } from '@prisma/client'
 
-export const create = [
-  passport.authenticate('jwt', { session: false }),
-  asyncHandler(async (req, res) => {
-    const { id: studentId } = req.user as Student
-    const { title, text } = req.body
+export const create = asyncHandler(async (req, res) => {
+  const { id: userId } = req.user as User
+  const { title, text } = req.body
 
-    const newSummary = await SummaryRepo.create({
-      studentId,
-      title,
-      text,
-      createdAt: new Date(),
-      updatedAt: new Date(),
-    })
+  const newSummary = await SummaryService.create({
+    userId: Number(userId),
+    title,
+    text,
+  })
 
-    res.status(202).json({ data: newSummary })
-  }),
-]
+  res.status(202).json({ data: newSummary })
+})
 
-export const getAll = [
-  passport.authenticate('jwt', { session: false }),
-  asyncHandler(async (req, res) => {
-    const { id: studentId } = req.user as Student
+export const getAll = asyncHandler(async (req, res) => {
+  const { id: studenId } = req.user as User
 
-    const allSummaries = await SummaryRepo.getAll(Number(studentId))
+  const summaryCollection = SummaryService.getAll(Number(studenId))
 
-    res.status(200).json({ data: allSummaries })
-  }),
-]
+  res.status(200).json({ data: summaryCollection })
+})
 
-export const update = [
-  passport.authenticate('jwt', { session: false }),
-  asyncHandler(async (req, res) => {
-    const { id: studentId } = req.user as Student
-    const { summaryId } = req.params
-    const { title, text } = req.body
+export const update = asyncHandler(async (req, res) => {
+  const { id: userId } = req.user as User
+  const { summaryId } = req.params
+  const { title, text } = req.body
 
-    const updatedSummary = await SummaryRepo.update({
-      id: Number(summaryId),
-      studentId,
-      title,
-      text,
-      updatedAt: new Date(),
-    })
+  const updatedSummary = await SummaryService.update(Number(summaryId), {
+    userId: Number(userId),
+    title,
+    text,
+  })
 
-    res.status(202).json({ data: updatedSummary })
-  }),
-]
+  res.status(202).json({ data: updatedSummary })
+})
 
-export const remove = [
-  passport.authenticate('jwt', { session: false }),
-  asyncHandler(async (req, res) => {
-    const { id: studentId } = req.user as Student
-    const { summaryId } = req.params
+export const remove = asyncHandler(async (req, res) => {
+  const { id: studenId } = req.user as User
+  const { summaryId } = req.params
 
-    const deletedSummary = await SummaryRepo.deleteOne(
-      Number(summaryId),
-      Number(studentId)
-    )
+  const deletedSummary = await SummaryService.remove(
+    Number(summaryId),
+    Number(studenId)
+  )
 
-    res.status(202).json({ data: deletedSummary })
-  }),
-]
+  res.status(202).json({ data: deletedSummary })
+})

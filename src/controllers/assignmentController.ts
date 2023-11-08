@@ -1,53 +1,40 @@
 import asyncHandler from 'express-async-handler'
-import passport from '../config/passport'
-import * as AssignmentRepo from '../repos/AssignmentRepo'
+import * as AssignmentService from '../modules/Assignment/assignmentService'
 
-export const create = [
-  passport.authenticate('jwt', { session: false }),
-  asyncHandler(async (req, res) => {
-    const { moduleId } = req.params
-    const { title, text } = req.body
+export const create = asyncHandler(async (req, res) => {
+  const { moduleId } = req.params
+  const { title, text } = req.body
 
-    const newAssignment = await AssignmentRepo.create({
-      title,
-      text,
-      moduleId: Number(moduleId),
-      createdAt: new Date(),
-      updatedAt: new Date(),
-    })
+  const newAssignment = await AssignmentService.create({
+    title,
+    text,
+    moduleId: Number(moduleId),
+  })
 
-    res.status(202).json({ data: newAssignment })
-  }),
-]
+  res.status(202).json({ data: newAssignment })
+})
 
-export const update = [
-  passport.authenticate('jwt', { session: false }),
-  asyncHandler(async (req, res) => {
-    const { moduleId, assignmentId } = req.params
-    const { title, text } = req.body
+export const update = asyncHandler(async (req, res) => {
+  const { moduleId, assigmentId } = req.params
+  const { title, text } = req.body
 
-    const updatedAssignment = await AssignmentRepo.update({
-      id: Number(assignmentId),
-      moduleId: Number(moduleId),
-      title,
-      text,
-      updatedAt: new Date(),
-    })
+  const updatedAssignment = await AssignmentService.update({
+    id: Number(assigmentId),
+    moduleId: Number(moduleId),
+    title,
+    text,
+  })
 
-    res.status(202).json({ data: updatedAssignment })
-  }),
-]
+  res.status(202).json({ data: updatedAssignment })
+})
 
-export const remove = [
-  passport.authenticate('jwt', { session: false }),
-  asyncHandler(async (req, res) => {
-    const { moduleId, assigmentId } = req.params
+export const remove = asyncHandler(async (req, res) => {
+  const { assigmentId, moduleId } = req.params
 
-    const deletedAssignment = await AssignmentRepo.deleteOne(
-      Number(assigmentId),
-      Number(moduleId)
-    )
+  const deletedAssignment = await AssignmentService.remove(
+    Number(assigmentId),
+    Number(moduleId)
+  )
 
-    res.status(202).json({ data: deletedAssignment })
-  }),
-]
+  res.status(202).json({ data: deletedAssignment })
+})
