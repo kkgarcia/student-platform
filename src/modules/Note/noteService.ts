@@ -1,24 +1,20 @@
 import * as NoteRepo from '../../repos/NoteRepo'
 
-export const creat = async (studentId: number, text: string) => {
+export const creat = async (userId: number, text: string) => {
   return await NoteRepo.create({
-    studentId,
+    userId,
     text,
   })
 }
 
-export const getAll = async (studentId: number) => {
-  return await NoteRepo.getAll(studentId)
+export const getAll = async (userId: number) => {
+  return await NoteRepo.getAll(userId)
 }
 
-export const update = async (
-  noteId: number,
-  studentId: number,
-  text: string
-) => {
-  return await NoteRepo.update(noteId, studentId, text)
+export const update = async (noteId: number, userId: number, text: string) => {
+  return await NoteRepo.update(noteId, userId, text)
 }
 
-export const deleteOne = async (noteId: number, studentId: number) => {
-  return await NoteRepo.deleteOne(noteId, studentId)
+export const deleteOne = async (noteId: number, userId: number) => {
+  return await NoteRepo.deleteOne(noteId, userId)
 }

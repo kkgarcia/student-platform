@@ -51,9 +51,9 @@ export const getOne = async (moduleId: number) => {
       id: moduleId,
     },
     include: {
-      commens: {
+      comments: {
         include: {
-          student: {
+          user: {
             select: {
               firstName: true,
               lastName: true,
@@ -62,7 +62,7 @@ export const getOne = async (moduleId: number) => {
           },
         },
       },
-      assigment: true,
+      assignments: true,
     },
   })
 

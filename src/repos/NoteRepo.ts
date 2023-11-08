@@ -2,7 +2,7 @@ import prisma from '../lib/prisma.ts'
 
 export type Note = {
   id?: number
-  studentId: number
+  userId: number
   text: string
   createdAt?: Date
   updatedAt?: Date
@@ -11,7 +11,7 @@ export type Note = {
 export const create = async (note: Note) => {
   const newNote = await prisma.note.create({
     data: {
-      studentId: note.studentId,
+      userId: note.userId,
       text: note.text,
       createdAt: note.createdAt || new Date(),
       updatedAt: note.updatedAt || new Date(),
@@ -21,10 +21,10 @@ export const create = async (note: Note) => {
   return newNote
 }
 
-export const getAll = async (studentId: number) => {
+export const getAll = async (userId: number) => {
   const allNotes = await prisma.note.findMany({
     where: {
-      studentId,
+      userId,
     },
   })
 
@@ -33,13 +33,13 @@ export const getAll = async (studentId: number) => {
 
 export const update = async (
   noteId: number,
-  studentId: number,
+  userId: number,
   newText: string
 ) => {
   const updatedNote = await prisma.note.update({
     where: {
       id: noteId,
-      studentId,
+      userId,
     },
     data: {
       text: newText,
@@ -50,11 +50,11 @@ export const update = async (
   return updatedNote
 }
 
-export const deleteOne = async (noteId: number, studentId: number) => {
+export const deleteOne = async (noteId: number, userId: number) => {
   const deletedNote = await prisma.note.delete({
     where: {
       id: noteId,
-      studentId,
+      userId,
     },
   })
 
