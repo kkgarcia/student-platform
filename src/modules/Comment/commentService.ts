@@ -4,19 +4,19 @@ import * as CommentRepo from '../../repos/CommentRepo'
 export const create = async (comment: Comment) => {
   return await CommentRepo.create({
     text: comment.text,
-    studentId: comment.studentId,
+    userId: comment.userId,
     moduleId: comment.moduleId,
   })
 }
 
 export const update = async (
   commentId: number,
-  studentId: number,
+  userId: number,
   newText: string
 ) => {
-  return await CommentRepo.update(commentId, studentId, newText)
+  return await CommentRepo.update(commentId, userId, newText)
 }
 
-export const remove = async (commentId: number, studentId: number) => {
-  return await CommentRepo.deleteOne(commentId, studentId)
+export const remove = async (commentId: number, userId: number) => {
+  return await CommentRepo.deleteOne(commentId, userId)
 }

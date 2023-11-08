@@ -1,15 +1,15 @@
 import asyncHandler from 'express-async-handler'
 import * as CommentService from '../modules/Comment/commentService'
-import { Student } from '@prisma/client'
+import { User } from '@prisma/client'
 
 export const create = asyncHandler(async (req, res) => {
-  const { id: studentId } = req.user as Student
+  const { id: userId } = req.user as User
   const { moduleId } = req.params
   const { text } = req.body
 
   const newComment = await CommentService.create({
     text,
-    studentId: Number(studentId),
+    userId: Number(userId),
     moduleId: Number(moduleId),
   })
 
@@ -17,13 +17,13 @@ export const create = asyncHandler(async (req, res) => {
 })
 
 export const update = asyncHandler(async (req, res) => {
-  const { id: studentId } = req.user as Student
+  const { id: userId } = req.user as User
   const { commentId } = req.params
   const { text } = req.body
 
   const updatedComment = await CommentService.update(
     Number(commentId),
-    Number(studentId),
+    Number(userId),
     text
   )
 
@@ -31,12 +31,12 @@ export const update = asyncHandler(async (req, res) => {
 })
 
 export const remove = asyncHandler(async (req, res) => {
-  const { id: studentId } = req.user as Student
+  const { id: userId } = req.user as User
   const { commentId } = req.params
 
   const deletedComment = await CommentService.remove(
     Number(commentId),
-    Number(studentId)
+    Number(userId)
   )
 
   res.status(202).json({ data: deletedComment })

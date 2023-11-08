@@ -3,7 +3,7 @@ import prisma from '../lib/prisma'
 export type Comment = {
   id?: string
   moduleId: number
-  studentId: number
+  userId: number
   text: string
   createdAt?: Date
   updatedAt?: Date
@@ -14,7 +14,7 @@ export const create = async (comment: Comment) => {
     data: {
       text: comment.text,
       moduleId: comment.moduleId,
-      studentId: comment.studentId,
+      userId: comment.userId,
       createdAt: comment.createdAt || new Date(),
       updatedAt: comment.updatedAt || new Date(),
     },
@@ -25,13 +25,13 @@ export const create = async (comment: Comment) => {
 
 export const update = async (
   commentId: number,
-  studentId: number,
+  userId: number,
   newText: string
 ) => {
   const updatedComment = await prisma.comment.update({
     where: {
       id: commentId,
-      studentId,
+      userId,
     },
     data: {
       text: newText,
@@ -41,11 +41,11 @@ export const update = async (
   return updatedComment
 }
 
-export const deleteOne = async (commentId: number, studentId: number) => {
+export const deleteOne = async (commentId: number, userId: number) => {
   const deletedComment = await prisma.comment.delete({
     where: {
       id: commentId,
-      studentId,
+      userId,
     },
   })
 

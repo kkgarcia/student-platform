@@ -12,7 +12,7 @@ export type Assignment = {
 export type AssignmentUpdateOptions = Omit<Assignment, 'createdAt'>
 
 export const create = async (assignment: Assignment) => {
-  const newAssignment = await prisma.assigment.create({
+  const newAssignment = await prisma.assignment.create({
     data: {
       title: assignment.title,
       text: assignment.text,
@@ -26,7 +26,7 @@ export const create = async (assignment: Assignment) => {
 }
 
 export const update = async (options: AssignmentUpdateOptions) => {
-  const updatedAssignment = await prisma.assigment.update({
+  const updatedAssignment = await prisma.assignment.update({
     where: {
       id: options.id,
       moduleId: options.moduleId,
@@ -42,7 +42,7 @@ export const update = async (options: AssignmentUpdateOptions) => {
 }
 
 export const deleteOne = async (assigmentId: number, moduleId: number) => {
-  const deletedAssignment = await prisma.assigment.delete({
+  const deletedAssignment = await prisma.assignment.delete({
     where: {
       id: assigmentId,
       moduleId,

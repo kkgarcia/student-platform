@@ -1,8 +1,7 @@
 import passport from 'passport'
 import { Strategy as JwtStrategy, type StrategyOptions } from 'passport-jwt'
 import { ExtractJwt } from 'passport-jwt'
-import * as StudentRepo from '../repos/StudentRepo.ts'
-import * as AdminRepo from '../repos/AdminRepo.ts'
+import * as UserRepo from '../repos/UserRepo.ts'
 import { SECRET } from '../config'
 
 const options: StrategyOptions = {
@@ -13,19 +12,7 @@ const options: StrategyOptions = {
 passport.use(
   new JwtStrategy(options, async function (payload, done) {
     try {
-      let user
-
-      switch (payload.role) {
-        case 'STUDENT': {
-          user = await StudentRepo.getStudentById(payload.sub)
-          break
-        }
-
-        case 'ADMIN': {
-          user = await AdminRepo.getAdminById(payload.sub)
-          break
-        }
-      }
+      const user = await UserRepo.getUserById(payload.sub)
 
       if (!user) {
         return done(null, false)

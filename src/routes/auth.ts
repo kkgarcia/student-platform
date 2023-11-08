@@ -1,22 +1,22 @@
 import { Router } from 'express'
 import { passport } from '../lib/passport.ts'
-import * as studentController from '../controllers/studentController'
-import * as adminController from '../controllers/adminController.ts'
+import { validate } from '../middleware/validateRequest.ts'
+import { userDTO } from '../modules/User/userDTO.ts'
+import * as UserController from '../controllers/userController.ts'
 
 const router = Router()
 
-// GET for chekcing if Student authenticated
+// GET for retrieving User
 router.get(
-  '/student',
+  '/user',
   passport.authenticate('jwt', { session: false }),
-  studentController.isAuthenticated
+  UserController.getUser
 )
 
-// GET for chekcing if User is Admin
-router.get(
-  '/admin',
-  passport.authenticate('jwt', { session: false }),
-  adminController.isAuthorized
-)
+// POST for loggin in User
+router.post('/log-in', validate(userDTO), UserController.login)
+
+// POST for register User
+router.post('/register', validate(userDTO), UserController.register)
 
 export default router
